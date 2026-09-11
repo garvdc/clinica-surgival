@@ -1,0 +1,17 @@
+{
+  "name": "clinica-surgival-demo",
+  "account_id": "2fda83694622e5b45d3aa64980408db5",
+  "main": "vinext/server/fetch-handler",
+  "compatibility_date": "2026-09-07",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "clinica-surgival-demo",
+      "database_id": "8abf2aa3-bdd9-4925-86a2-b6034907a9c9",
+      "migrations_dir": "drizzle"
+    }
+  ]
+}

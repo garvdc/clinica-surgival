@@ -1,0 +1,21 @@
+import type { Actor } from '@/identity/auth.service';
+import type { Patient, Payer, PatientPayer } from '@/patients/patients.types';
+import type { Appointment, Professional } from '@/scheduling/scheduling.types';
+import type { Encounter, EncounterVersion } from '@/clinical/clinical.types';
+import type { Quote, Sale, Payment } from '@/billing/billing.types';
+import type { AuditEvent } from '@/audit/audit.types';
+export type Data = {
+  user: Actor;
+  patients: Patient[];
+  payers: Payer[];
+  links: PatientPayer[];
+  professionals: Professional[];
+  appointments: Appointment[];
+  encounters: Encounter[];
+  versions: EncounterVersion[];
+  quotes: Quote[];
+  sales: Sale[];
+  payments: Payment[];
+  audit: AuditEvent[];
+};
+export type Action = (values: Record<string, unknown>) => Promise<void>;
