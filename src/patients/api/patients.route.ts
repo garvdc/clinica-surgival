@@ -1,1 +1,1 @@
-export { createPatient } from '@/patients/patients.service';
+export { createPatient, updatePatient } from '@/patients/patients.service';

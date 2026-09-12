@@ -4,6 +4,7 @@ import { Button } from '@/shared/ui/button';
 import { useEffect, useState, useCallback } from 'react';
 import type { Data } from '@/api/clinic.types';
 import type { Appointment } from '@/scheduling/scheduling.types';
+import type { Patient, Payer } from '@/patients/patients.types';
 import { localDay } from '@/shared/format';
 import { Workflow } from '@/layout/workflow';
 import { useAgendaTool } from '@/scheduling/use-agenda-tool';
@@ -31,6 +32,9 @@ export default function Home() {
     [busy, setBusy] = useState(false),
     [patientId, setPatientId] = useState(''),
     [payerKind, setPayerKind] = useState('self');
+  const [editingPatient, setEditingPatient] = useState<
+    { patient: Patient; payer: Payer } | null
+  >(null);
   useEffect(() => {
     if (!modal) return;
     const root = document.querySelector<HTMLElement>('.modal');
@@ -117,8 +121,12 @@ export default function Home() {
               previousTime: reschedule.time,
             }
           : {}),
+        ...(action === 'patient_update' && editingPatient
+          ? { id: editingPatient.patient.id }
+          : {}),
       });
       setModal(null);
+      setEditingPatient(null);
       setNotice(
         action === 'login' ? 'Sesión iniciada.' : 'Guardado correctamente.',
       );
@@ -132,11 +140,23 @@ export default function Home() {
   const canWrite = data && ['admin', 'reception'].includes(data.user.role);
   function open(type: 'patient' | 'appointment') {
     setReschedule(null);
+    setEditingPatient(null);
     setError('');
     setNotice('');
     setPatientId(data?.patients[0]?.id ?? '');
     setPayerKind('self');
     setModal(type);
+  }
+  function openEdit(p: Patient) {
+    const payerId = data?.links.find((l) => l.patient_id === p.id)?.payer_id;
+    const payer =
+      data?.payers.find((py) => py.id === payerId) ?? null;
+    setReschedule(null);
+    setError('');
+    setNotice('');
+    setEditingPatient(payer ? { patient: p, payer } : null);
+    setPayerKind(payer?.kind ?? 'self');
+    setModal('patient');
   }
   function shift(n: number) {
     const d = new Date(date + 'T12:00:00');
@@ -236,7 +256,13 @@ export default function Home() {
             />
           )}
           {tab === 'patients' && (
-            <PatientList data={data} search={search} setSearch={setSearch} />
+            <PatientList
+              data={data}
+              search={search}
+              setSearch={setSearch}
+              canWrite={!!canWrite}
+              onEdit={openEdit}
+            />
           )}
           {['clinical', 'quotes', 'sales'].includes(tab) && (
             <Workflow
@@ -275,7 +301,9 @@ export default function Home() {
                 </span>
                 <h2 id="modal-title">
                   {modal === 'patient'
-                    ? 'Registrar paciente'
+                    ? editingPatient
+                      ? 'Editar paciente'
+                      : 'Registrar paciente'
                     : reschedule
                       ? 'Reprogramar cita'
                       : 'Programar una cita'}
@@ -290,12 +318,22 @@ export default function Home() {
               </button>
             </div>
             <form
-              onSubmit={(e) => submit(e, reschedule ? 'reschedule' : modal)}
+              onSubmit={(e) =>
+                submit(
+                  e,
+                  reschedule
+                    ? 'reschedule'
+                    : modal === 'patient' && editingPatient
+                      ? 'patient_update'
+                      : modal,
+                )
+              }
             >
               {modal === 'patient' ? (
                 <PatientForm
                   payerKind={payerKind}
                   setPayerKind={setPayerKind}
+                  editing={editingPatient}
                 />
               ) : (
                 <AppointmentForm

@@ -16,7 +16,7 @@ import { workflow } from '@/api/workflow';
 import { db } from '@/shared/db/connection';
 import { json } from '@/shared/api/response';
 import { databaseError } from '@/shared/api/errors';
-import { createPatient } from '@/patients/api/patients.route';
+import { createPatient, updatePatient } from '@/patients/api/patients.route';
 import { appointmentsRoute } from '@/scheduling/api/appointments.route';
 export async function GET(req: Request) {
   try {
@@ -96,6 +96,7 @@ export async function POST(req: Request) {
         403,
       );
     if (x.action === 'patient') return await createPatient(db, u, x);
+    if (x.action === 'patient_update') return await updatePatient(db, u, x);
     const appointmentResult = await appointmentsRoute(db, u, x);
     if (appointmentResult) return appointmentResult;
     return json({ error: 'Acción desconocida.' }, 400);

@@ -1,14 +1,20 @@
 'use client';
 import { Search } from 'lucide-react';
 import type { Data } from '@/api/clinic.types';
+import type { Patient } from '@/patients/patients.types';
+import { Button } from '@/shared/ui/button';
 export function PatientList({
   data,
   search,
   setSearch,
+  canWrite,
+  onEdit,
 }: {
   data: Pick<Data, 'patients' | 'payers' | 'links'>;
   search: string;
   setSearch: (s: string) => void;
+  canWrite: boolean;
+  onEdit: (p: Patient) => void;
 }) {
   return (
     <section className="panel">
@@ -33,6 +39,7 @@ export function PatientList({
               <th>TELÉFONO</th>
               <th>NACIMIENTO</th>
               <th>PAGADOR</th>
+              {canWrite && <th>ACCIONES</th>}
             </tr>
           </thead>
           <tbody>
@@ -60,6 +67,18 @@ export function PatientList({
                       .map((py) => py.name)
                       .join(', ')}
                   </td>
+                  {canWrite && (
+                    <td>
+                      <div className="row-actions">
+                        <Button
+                          className="secondary"
+                          onClick={() => onEdit(p)}
+                        >
+                          Editar
+                        </Button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
           </tbody>
