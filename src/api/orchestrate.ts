@@ -1,3 +1,4 @@
+import { usersRoute } from '@/identity/users.service';
 import { listPayments } from '@/billing/billing.service';
 import { listSales } from '@/billing/billing.service';
 import { listQuotes } from '@/billing/billing.service';
@@ -93,6 +94,8 @@ export async function POST(req: Request) {
     const u = await requireAuth(req);
     if (u instanceof Response) return u;
     if (x.action === 'logout') return await logout(db, req);
+    const usersResult = await usersRoute(db, u, x);
+    if (usersResult) return usersResult;
     const workflowResult = await workflow(db(), u, x);
     if (workflowResult) return workflowResult;
     if (!mayWrite(u.role))

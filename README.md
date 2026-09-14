@@ -64,7 +64,7 @@ Cashea se registra por el monto cubierto, con referencia; no hay integración co
 
 ## Límites de esta primera versión
 
-- No equivale al MVP completo de todos los documentos: faltan administración de profesionales/usuarios/horarios, agenda semanal, adjuntos, formularios configurables, procedimientos específicos, múltiples líneas por presupuesto y reversas de pagos/ventas.
+- No equivale al MVP completo de todos los documentos: faltan administración de profesionales/horarios, agenda semanal, adjuntos, formularios configurables, procedimientos específicos, múltiples líneas por presupuesto y reversas de pagos/ventas.
 - Los horarios reales, campos clínicos y reglas de impuestos siguen pendientes de definir. La agenda permite reservar libremente por fecha/hora mientras se especifican los horarios; solo evita solapamientos.
 - El profesional demo puede iniciar una atención sobre una cita disponible; el vínculo entre cuenta y profesional de agenda debe configurarse antes de un piloto con varios profesionales.
 - Hay topes de carga inicial (500 pacientes/pagadores, 1.000 citas). La paginación en servidor y el rendimiento con volumen real quedan pendientes.
@@ -98,3 +98,5 @@ Esto difiere de la propuesta técnica NestJS/PostgreSQL: dicha propuesta no era 
 Fuentes: Documento Funcional de Arranque v0.1, propuesta técnica, esquema gráfico y ruta del proyecto en la carpeta superior. Las respuestas confirmadas del usuario se registran en `docs/DECISIONES.md`.
 
 La edición independiente de pacientes y responsables de pago se describe en [la guía de pagadores](docs/PAGADORES.md).
+
+La gestión de cuentas está disponible para Administración en **Configuración → Usuarios**. Consulta [la guía de usuarios](docs/USUARIOS.md).

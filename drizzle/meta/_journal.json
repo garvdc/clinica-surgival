@@ -15,6 +15,13 @@
       "when": 1788836165693,
       "tag": "0001_goofy_sheva_callister",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1789418231844,
+      "tag": "0002_user_management",
+      "breakpoints": true
     }
   ]
 }

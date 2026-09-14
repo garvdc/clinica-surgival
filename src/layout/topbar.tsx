@@ -8,6 +8,7 @@ export function Topbar({ tab }: { tab: string }) {
           {
             (
               {
+                users: 'Configuración / Usuarios',
                 agenda: 'Agenda',
                 patients: 'Pacientes',
                 audit: 'Actividad',

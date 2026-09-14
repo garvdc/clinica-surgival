@@ -17,6 +17,7 @@ export function PageHeading({
           {
             (
               {
+                users: 'CONFIGURACIÓN',
                 agenda: 'ORGANIZA LA JORNADA',
                 patients: 'PERSONAS Y PAGADORES',
                 audit: 'TRAZABILIDAD',
@@ -31,6 +32,7 @@ export function PageHeading({
           {
             (
               {
+                users: 'Usuarios del sistema',
                 agenda: 'Agenda de atención',
                 patients: 'Tus pacientes',
                 audit: 'Registro de actividad',
@@ -45,6 +47,7 @@ export function PageHeading({
           {
             (
               {
+                users: 'Cuentas individuales y permisos de acceso.',
                 agenda: 'Cada cita, en su momento.',
                 patients: 'Encuentra una ficha o registra un nuevo paciente.',
                 audit: 'Consulta quién hizo cada cambio.',

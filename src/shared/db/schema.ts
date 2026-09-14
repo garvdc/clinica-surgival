@@ -10,6 +10,8 @@ export const users = sqliteTable('users', {
   name: text().notNull(),
   email: text().notNull().unique(),
   role: text().notNull(),
+  active: integer().notNull().default(1),
+  version: integer().notNull().default(1),
   salt: text().notNull(),
   passwordHash: text('password_hash').notNull(),
 });

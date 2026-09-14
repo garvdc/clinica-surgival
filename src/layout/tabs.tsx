@@ -1,5 +1,6 @@
 'use client';
 import {
+  Settings,
   CalendarDays,
   Users,
   ShieldCheck,
@@ -38,6 +39,7 @@ export function Tabs({
           : []),
         ...(role === 'admin'
           ? [
+              { key: 'users', label: 'Configuración', icon: Settings },
               {
                 key: 'audit',
                 label: 'Registro de actividad',

@@ -1,4 +1,5 @@
 'use client';
+import { UsersView } from '@/identity/users.view';
 import { X, Check } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import { useEffect, useState, useCallback } from 'react';
@@ -83,6 +84,7 @@ export default function Home() {
       const r = await fetch('/api/clinic');
       if (r.status === 401) {
         setData(null);
+        setTab('agenda');
         return;
       }
       const j = (await r.json()) as Data & { error?: string };
@@ -230,6 +232,7 @@ export default function Home() {
           try {
             await post({ action: 'logout' });
             setData(null);
+            setTab('agenda');
           } catch (e) {
             setError((e as Error).message);
           }
@@ -299,6 +302,9 @@ export default function Home() {
                 s.startsWith('Error:') ? setError(s.slice(7)) : setNotice(s)
               }
             />
+          )}
+          {tab === 'users' && data.user.role === 'admin' && (
+            <UsersView currentId={data.user.id} reload={load} />
           )}
           {tab === 'audit' && <AuditLog events={data.audit} />}
         </main>

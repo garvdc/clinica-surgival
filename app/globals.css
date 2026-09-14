@@ -1455,3 +1455,39 @@ pre,
     margin-block: 6px;
   }
 }
+
+.users-view {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.user-editor,
+.user-toolbar {
+  padding: 20px;
+}
+.user-fields {
+  border: 0;
+  padding: 0;
+  margin: 20px 0 0;
+  min-width: 0;
+}
+.user-actions,
+.user-toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+.user-actions {
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+.user-toolbar .field {
+  flex: 1;
+}
+@media (max-width: 480px) {
+  .user-actions > button,
+  .user-toolbar > button {
+    width: 100%;
+  }
+}

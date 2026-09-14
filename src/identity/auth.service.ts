@@ -1,6 +1,9 @@
 import { db } from '@/shared/db/connection';
 export type Actor = { id: string; name: string; email: string; role: string };
-export async function actor(req: Request): Promise<Actor | null> {
+export async function actor(
+  req: Request,
+  connect: () => D1Database = db,
+): Promise<Actor | null> {
   const token = req.headers
     .get('cookie')
     ?.split(';')
@@ -8,42 +11,18 @@ export async function actor(req: Request): Promise<Actor | null> {
     .find((s) => s.startsWith('clinic_session='))
     ?.slice(15);
   if (!token) return null;
-  return db()
+  return connect()
     .prepare(
-      'SELECT u.id,u.name,u.email,u.role FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token=? AND s.expires>?',
+      'SELECT u.id,u.name,u.email,u.role FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token=? AND s.expires>? AND u.active=1',
     )
     .bind(token, Date.now())
     .first<Actor>();
 }
 import { required } from '@/shared/validation';
 import { json } from '@/shared/api/response';
-import { auditStmt } from '@/audit/audit.service';
 
-const hex = (bytes: ArrayBuffer) =>
-  Array.from(new Uint8Array(bytes), (x) =>
-    x.toString(16).padStart(2, '0'),
-  ).join('');
-export async function hash(password: string, salt: string) {
-  const key = await crypto.subtle.importKey(
-    'raw',
-    new TextEncoder().encode(password),
-    'PBKDF2',
-    false,
-    ['deriveBits'],
-  );
-  return hex(
-    await crypto.subtle.deriveBits(
-      {
-        name: 'PBKDF2',
-        salt: new TextEncoder().encode(salt),
-        iterations: 100000,
-        hash: 'SHA-256',
-      },
-      key,
-      256,
-    ),
-  );
-}
+import { hash } from '@/identity/password';
+export { hash } from '@/identity/password';
 
 export async function login(
   db: () => D1Database,
@@ -73,18 +52,48 @@ export async function login(
   const row = await db()
     .prepare('SELECT * FROM users WHERE email=?')
     .bind(email)
-    .first<Actor & { salt: string; password_hash: string }>();
+    .first<
+      Actor & {
+        salt: string;
+        password_hash: string;
+        active: number;
+        version: number;
+      }
+    >();
   const result = await hash(password, row?.salt ?? 'invalid-user-salt');
-  if (!row || result !== row.password_hash)
+  if (!row || !row.active || result !== row.password_hash)
     return json({ error: 'Correo o contraseña incorrectos.' }, 401);
   const token = crypto.randomUUID() + crypto.randomUUID();
-  await db().batch([
+  const saved = await db().batch([
     db()
-      .prepare('INSERT INTO sessions(token,user_id,expires) VALUES(?,?,?)')
-      .bind(token, row.id, Date.now() + 8 * 3600000),
+      .prepare(
+        'INSERT INTO sessions(token,user_id,expires) SELECT ?,id,? FROM users WHERE id=? AND active=1 AND password_hash=? AND salt=? AND version=?',
+      )
+      .bind(
+        token,
+        Date.now() + 8 * 3600000,
+        row.id,
+        row.password_hash,
+        row.salt,
+        row.version,
+      ),
     db().prepare('DELETE FROM login_attempts WHERE email=?').bind(email),
-    auditStmt(db(), row, 'Inicio de sesión', row.id, 'Cuenta individual'),
+    db()
+      .prepare(
+        'INSERT INTO audit(id,actor,action,entity_id,detail,created_at) SELECT ?,?,?,?,?,? WHERE EXISTS(SELECT 1 FROM sessions WHERE token=?)',
+      )
+      .bind(
+        crypto.randomUUID(),
+        row.name,
+        'Inicio de sesión',
+        row.id,
+        'Cuenta individual',
+        new Date().toISOString(),
+        token,
+      ),
   ]);
+  if (!saved[0].meta.changes)
+    return json({ error: 'La cuenta cambió. Inicia sesión de nuevo.' }, 401);
   return json({ ok: true }, 200, {
     'Set-Cookie': `clinic_session=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800${new URL(req.url).protocol === 'https:' ? '; Secure' : ''}`,
   });
