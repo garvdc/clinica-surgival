@@ -1138,3 +1138,320 @@ textarea:focus {
     flex-wrap: wrap;
   }
 }
+
+.shared-payer-confirm {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+.shared-payer-confirm input[type='checkbox'] {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+/* Keep account actions reachable on short screens; only the menu scrolls. */
+.sidebar {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px;
+  scrollbar-gutter: stable;
+}
+.sidebar-content > * {
+  flex-shrink: 0;
+}
+.sidebar-content .demo-card {
+  margin-top: auto;
+}
+.sidebar-content nav {
+  margin-bottom: 24px;
+}
+.sidebar .account {
+  flex: 0 0 auto;
+  min-width: 0;
+  margin-top: 12px;
+  padding-top: 12px;
+}
+.account-details {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.account .avatar,
+.account button,
+.brand-icon {
+  flex-shrink: 0;
+}
+.account button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px;
+  border-radius: 7px;
+  font-size: 13px;
+}
+.account button:hover {
+  background: #e8f4f3;
+}
+.main-area,
+.content,
+.panel,
+.workflow,
+.clinical-list,
+.sales-list {
+  min-width: 0;
+}
+.stats,
+.sale-totals {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.stat,
+.sale-totals > div,
+label,
+.form-grid > * {
+  min-width: 0;
+}
+.table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.table-scroll table {
+  min-width: 640px;
+}
+.table-scroll:focus-visible {
+  outline: 2px solid #12828c;
+  outline-offset: -2px;
+}
+.topbar {
+  height: auto;
+  min-height: 74px;
+  padding-block: 14px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.topbar > span,
+.page-heading > div,
+.workflow-intro > span {
+  min-width: 0;
+}
+.primary,
+.secondary {
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  padding-block: 10px !important;
+}
+.primary svg,
+.secondary svg,
+.success svg {
+  flex-shrink: 0;
+}
+.schedule-heading,
+.date-controls,
+.workflow-intro,
+.encounter-card header,
+.sale-card header,
+footer {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.date-controls {
+  min-width: 0;
+}
+.date-controls > button,
+.refresh,
+.modal-head button {
+  min-width: 44px;
+  min-height: 44px;
+}
+.form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+label input,
+label select,
+textarea {
+  min-width: 0;
+  max-width: 100%;
+}
+pre,
+.error,
+.success,
+.sale-totals b,
+.encounter-card h2,
+.sale-card h2 {
+  overflow-wrap: anywhere;
+}
+.success {
+  align-items: flex-start;
+}
+.success button {
+  flex-shrink: 0;
+  min-width: 36px;
+  min-height: 36px;
+}
+.modal-backdrop {
+  height: 100vh;
+  height: 100dvh;
+  padding: max(12px, env(safe-area-inset-top))
+    max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-left));
+}
+.modal {
+  max-height: 100%;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+.modal-head {
+  gap: 12px;
+  align-items: flex-start;
+}
+.modal-head button {
+  flex-shrink: 0;
+}
+.modal form {
+  min-width: 0;
+}
+.modal-actions {
+  flex-wrap: wrap;
+}
+.modal .modal-actions {
+  position: sticky;
+  bottom: -27px;
+  background: white;
+  z-index: 1;
+  padding-block: 12px;
+  box-shadow: 0 -6px 12px #ffffffdd;
+}
+.login > *,
+.login-story,
+.login-form {
+  min-width: 0;
+}
+@media (min-width: 761px) and (max-height: 720px) {
+  .sidebar {
+    padding-top: 16px;
+  }
+  .workspace {
+    margin-top: 22px;
+    margin-bottom: 14px;
+  }
+  .sidebar-content .demo-card {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .sidebar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'brand account' 'navigation navigation';
+    gap: 12px;
+    height: auto;
+    overflow: visible;
+    padding: 12px 16px;
+  }
+  .sidebar-content {
+    display: contents;
+  }
+  .sidebar .brand {
+    grid-area: brand;
+    padding: 0;
+    gap: 8px;
+  }
+  .sidebar .account {
+    grid-area: account;
+    position: static;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .sidebar nav {
+    grid-area: navigation;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 4px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+  .sidebar nav button {
+    flex-shrink: 0;
+    min-height: 44px;
+  }
+  .topbar {
+    min-height: 50px;
+  }
+  .page-heading,
+  .workflow-intro {
+    align-items: flex-start;
+  }
+  .page-heading {
+    flex-wrap: wrap;
+  }
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .modal .modal-actions {
+    bottom: -20px;
+  }
+  label input,
+  label select,
+  textarea,
+  .search input,
+  .filters select {
+    font-size: 16px;
+  }
+  .workflow-form {
+    padding: 18px;
+  }
+  .empty {
+    padding: 28px 16px;
+  }
+  .login-form {
+    padding: 28px 20px;
+  }
+  .sale-actions > *,
+  .modal-actions > * {
+    min-height: 44px;
+  }
+}
+@media (max-width: 480px) {
+  .account .avatar {
+    display: none;
+  }
+  .stats,
+  .sale-totals {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .page-heading > .primary,
+  .workflow-intro > .primary {
+    width: 100%;
+  }
+  .topbar .slash {
+    padding-inline: 4px;
+  }
+  .filters select {
+    max-width: none;
+  }
+  .modal-actions > * {
+    flex: 1 1 100px;
+  }
+  .sale-actions > * {
+    width: 100%;
+  }
+  .stat b {
+    margin-block: 6px;
+  }
+}

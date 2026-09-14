@@ -95,3 +95,5 @@ test('saldo y una única venta por presupuesto se protegen en la base', () => {
   );
   d.close();
 });
+
+import './patients.test.mjs';

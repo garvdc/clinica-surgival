@@ -168,7 +168,12 @@ export function AgendaView({
             <RefreshCw size={17} />
           </button>
         </div>
-        <div className="table-scroll">
+        <div
+          className="table-scroll"
+          tabIndex={0}
+          role="region"
+          aria-label="Citas"
+        >
           <table>
             <thead>
               <tr>

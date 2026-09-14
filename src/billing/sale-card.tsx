@@ -50,7 +50,12 @@ export function SaleCard({
           <b>{money(s.total_cents - s.paid_cents)}</b>
         </div>
       </div>
-      <div className="table-scroll">
+      <div
+        className="table-scroll"
+        tabIndex={0}
+        role="region"
+        aria-label="Pagos de la venta"
+      >
         <table>
           <thead>
             <tr>

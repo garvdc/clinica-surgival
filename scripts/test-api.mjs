@@ -63,6 +63,88 @@ await request(
 );
 const data = await request('reception');
 const payerId = data.links.find((l) => l.patient_id === p.id).payer_id;
+const patientUpdate = {
+  action: 'patient_update',
+  id: p.id,
+  name: 'Paciente editado ' + nonce,
+  document: 'TEST-' + nonce,
+  phone: 'TEST-' + nonce,
+  birthDate: '1990-01-01',
+};
+await request('cashier', patientUpdate, 403);
+await request('clinician', patientUpdate, 403);
+await request('reception', patientUpdate);
+const updatedPatient = await request('reception');
+assert.equal(
+  updatedPatient.patients.find((row) => row.id === p.id).name,
+  patientUpdate.name,
+);
+assert.equal(
+  updatedPatient.payers.find((row) => row.id === payerId).name,
+  patientUpdate.name,
+);
+await request('cashier', { action: 'payer_details', id: payerId }, 403);
+await request('clinician', { action: 'payer_update', id: payerId }, 403);
+await request(
+  'reception',
+  { action: 'payer_update', id: payerId, name: 'Incorrecto', kind: 'person' },
+  400,
+);
+const external = await request(
+  'reception',
+  {
+    action: 'patient',
+    name: 'Paciente externo ' + nonce,
+    document: 'EXT-' + nonce,
+    phone: 'EXT-' + nonce,
+    birthDate: '1990-01-01',
+    payerKind: 'company',
+    payerName: 'Empresa ' + nonce,
+  },
+  201,
+);
+const externalData = await request('reception');
+const externalPayerId = externalData.links.find(
+  (row) => row.patient_id === external.id,
+).payer_id;
+await request('reception', {
+  action: 'patient_update',
+  id: external.id,
+  name: 'Ficha externa editada ' + nonce,
+  document: 'EXT-' + nonce,
+  phone: 'EXT-' + nonce,
+  birthDate: '1990-01-01',
+  payerKind: 'self',
+  payerName: 'No debe propagarse',
+});
+const externalDetails = await request('reception', {
+  action: 'payer_details',
+  id: externalPayerId,
+});
+assert.equal(externalDetails.payer.name, 'Empresa ' + nonce);
+assert.equal(externalDetails.payer.kind, 'company');
+assert.deepEqual(
+  externalDetails.patients.map((row) => row.id),
+  [external.id],
+);
+const payerUpdate = {
+  action: 'payer_update',
+  id: externalPayerId,
+  name: 'Empresa editada ' + nonce,
+  kind: 'company',
+  previousName: externalDetails.payer.name,
+  previousKind: externalDetails.payer.kind,
+  associationKey: externalDetails.associationKey,
+};
+await request('admin', payerUpdate);
+await request('reception', payerUpdate, 409);
+const finalPayer = await request('reception', {
+  action: 'payer_details',
+  id: externalPayerId,
+});
+assert.equal(finalPayer.payer.name, payerUpdate.name);
+assert.equal(finalPayer.patients[0].name, 'Ficha externa editada ' + nonce);
+
 const date = new Date(
   2100 + Math.floor(Math.random() * 50),
   Math.floor(Math.random() * 12),

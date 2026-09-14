@@ -9,15 +9,9 @@ https://clinica-surgival-demo.clinica-surgival-mvp.workers.dev
 Entra directamente con las cuentas de `ACCESOS_DEMO.txt`, sin ChatGPT. Esta es la
 dirección para compartir con el cliente. El 9 de septiembre de 2026 se copiaron los
 datos ficticios locales y se comprobó el flujo completo en el alojamiento. Las
-bases local, Sites y Cloudflare son independientes; para compartir cambios usen
+bases local y Cloudflare son independientes; para compartir cambios usen
 ambos esta dirección y actualicen la pantalla. Instrucciones de publicación y
 respaldo en `docs/CLOUDFLARE.md`.
-
-## Publicación anterior en Sites
-
-https://clinica-surgival-demo.rea-de-traba-1179.chatgpt.site
-
-Primero se inicia sesión con la cuenta autorizada por el alojamiento; después se usa una cuenta demo. Se trasladó una copia de los datos ficticios locales el 8 de septiembre de 2026. Las bases local y alojada son independientes: para compartir cambios ambos deben usar la URL alojada y actualizar la página. El compañero aún requiere invitación autorizada.
 
 ## Iniciar
 
@@ -60,6 +54,7 @@ Cashea se registra por el monto cubierto, con referencia; no hay integración co
 
 - Sesiones individuales con cookie HttpOnly, contraseña derivada con PBKDF2, expiración y cierre; limitación de intentos de acceso por cuenta.
 - Paciente separado del pagador; detección de identificación duplicada y coincidencias de teléfono/nombre-fecha.
+- Edición de datos personales independiente de los pagadores externos. Cada responsable de pago tiene su propia acción de edición, lista de pacientes vinculados y confirmación cuando es compartido. Solo administración y recepción pueden editar.
 - Agenda diaria filtrable por profesional/estado, reprogramación, llegada, confirmación, cancelación y control de solapamiento en la base de datos.
 - Notas de consulta, borrador, cierre y correcciones con versiones conservadas; autorización clínica en el servidor.
 - Presupuesto básico de un concepto, aprobación, conversión única a venta.
@@ -69,7 +64,7 @@ Cashea se registra por el monto cubierto, con referencia; no hay integración co
 
 ## Límites de esta primera versión
 
-- No equivale al MVP completo de todos los documentos: faltan edición de fichas, administración de profesionales/usuarios/horarios, agenda semanal, adjuntos, formularios configurables, procedimientos específicos, múltiples líneas por presupuesto y reversas de pagos/ventas.
+- No equivale al MVP completo de todos los documentos: faltan administración de profesionales/usuarios/horarios, agenda semanal, adjuntos, formularios configurables, procedimientos específicos, múltiples líneas por presupuesto y reversas de pagos/ventas.
 - Los horarios reales, campos clínicos y reglas de impuestos siguen pendientes de definir. La agenda permite reservar libremente por fecha/hora mientras se especifican los horarios; solo evita solapamientos.
 - El profesional demo puede iniciar una atención sobre una cita disponible; el vínculo entre cuenta y profesional de agenda debe configurarse antes de un piloto con varios profesionales.
 - Hay topes de carga inicial (500 pacientes/pagadores, 1.000 citas). La paginación en servidor y el rendimiento con volumen real quedan pendientes.
@@ -101,3 +96,5 @@ React + TypeScript, Vinext/Vite, consultas preparadas y transacciones sobre D1/S
 Esto difiere de la propuesta técnica NestJS/PostgreSQL: dicha propuesta no era una selección aprobada. Este código demuestra el flujo; antes de una versión operativa se debe decidir si conservar esta infraestructura o trasladar los módulos a aquella arquitectura.
 
 Fuentes: Documento Funcional de Arranque v0.1, propuesta técnica, esquema gráfico y ruta del proyecto en la carpeta superior. Las respuestas confirmadas del usuario se registran en `docs/DECISIONES.md`.
+
+La edición independiente de pacientes y responsables de pago se describe en [la guía de pagadores](docs/PAGADORES.md).

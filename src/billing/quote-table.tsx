@@ -14,7 +14,12 @@ export function QuoteTable({
   action: Action;
 }) {
   return (
-    <section className="panel table-scroll">
+    <section
+      className="panel table-scroll"
+      tabIndex={0}
+      role="region"
+      aria-label="Presupuestos"
+    >
       <table>
         <thead>
           <tr>

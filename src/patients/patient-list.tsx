@@ -1,7 +1,7 @@
 'use client';
 import { Search } from 'lucide-react';
 import type { Data } from '@/api/clinic.types';
-import type { Patient } from '@/patients/patients.types';
+import type { Patient, Payer } from '@/patients/patients.types';
 import { Button } from '@/shared/ui/button';
 export function PatientList({
   data,
@@ -9,12 +9,16 @@ export function PatientList({
   setSearch,
   canWrite,
   onEdit,
+  onEditPayer,
+  busy,
 }: {
   data: Pick<Data, 'patients' | 'payers' | 'links'>;
   search: string;
   setSearch: (s: string) => void;
   canWrite: boolean;
   onEdit: (p: Patient) => void;
+  onEditPayer: (p: Payer) => void;
+  busy: boolean;
 }) {
   return (
     <section className="panel">
@@ -30,7 +34,12 @@ export function PatientList({
         </div>
         <span className="count">{data.patients.length} pacientes</span>
       </div>
-      <div className="table-scroll">
+      <div
+        className="table-scroll"
+        tabIndex={0}
+        role="region"
+        aria-label="Pacientes"
+      >
         <table>
           <thead>
             <tr>
@@ -64,14 +73,31 @@ export function PatientList({
                           (l) => l.patient_id === p.id && l.payer_id === py.id,
                         ),
                       )
-                      .map((py) => py.name)
-                      .join(', ')}
+                      .map((py) => (
+                        <div key={py.id}>
+                          <span>{py.name}</span>
+                          {canWrite && py.kind !== 'self' && (
+                            <Button
+                              type="button"
+                              className="secondary"
+                              disabled={busy}
+                              onClick={() => onEditPayer(py)}
+                              aria-label={
+                                'Editar responsable de pago: ' + py.name
+                              }
+                            >
+                              Editar responsable de pago
+                            </Button>
+                          )}
+                        </div>
+                      ))}
                   </td>
                   {canWrite && (
                     <td>
                       <div className="row-actions">
                         <Button
                           className="secondary"
+                          disabled={busy}
                           onClick={() => onEdit(p)}
                         >
                           Editar

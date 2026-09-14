@@ -8,7 +8,12 @@ export function AuditLog({ events }: { events: AuditEvent[] }) {
         <h2>Últimos 100 eventos</h2>
         <ShieldCheck size={21} />
       </div>
-      <div className="table-scroll">
+      <div
+        className="table-scroll"
+        tabIndex={0}
+        role="region"
+        aria-label="Registro de actividad"
+      >
         <table>
           <thead>
             <tr>

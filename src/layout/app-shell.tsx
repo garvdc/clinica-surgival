@@ -4,7 +4,7 @@ import { Button } from '@/shared/ui/button';
 import { useEffect, useState, useCallback } from 'react';
 import type { Data } from '@/api/clinic.types';
 import type { Appointment } from '@/scheduling/scheduling.types';
-import type { Patient, Payer } from '@/patients/patients.types';
+import type { Patient, Payer, PayerDetails } from '@/patients/patients.types';
 import { localDay } from '@/shared/format';
 import { Workflow } from '@/layout/workflow';
 import { useAgendaTool } from '@/scheduling/use-agenda-tool';
@@ -17,6 +17,7 @@ import { AgendaView } from '@/scheduling/agenda.view';
 import { PatientList } from '@/patients/patient-list';
 import { AuditLog } from '@/audit/audit-log';
 import { PatientForm } from '@/patients/patient-form';
+import { PayerForm } from '@/patients/payer-form';
 import { AppointmentForm } from '@/scheduling/appointment-form';
 export default function Home() {
   const [data, setData] = useState<Data | null>(null),
@@ -28,13 +29,14 @@ export default function Home() {
     [search, setSearch] = useState(''),
     [filter, setFilter] = useState('all'),
     [professional, setProfessional] = useState('all'),
-    [modal, setModal] = useState<'patient' | 'appointment' | null>(null),
+    [modal, setModal] = useState<'patient' | 'appointment' | 'payer' | null>(
+      null,
+    ),
     [busy, setBusy] = useState(false),
     [patientId, setPatientId] = useState(''),
     [payerKind, setPayerKind] = useState('self');
-  const [editingPatient, setEditingPatient] = useState<
-    { patient: Patient; payer: Payer } | null
-  >(null);
+  const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
+  const [editingPayer, setEditingPayer] = useState<PayerDetails | null>(null);
   useEffect(() => {
     if (!modal) return;
     const root = document.querySelector<HTMLElement>('.modal');
@@ -122,7 +124,16 @@ export default function Home() {
             }
           : {}),
         ...(action === 'patient_update' && editingPatient
-          ? { id: editingPatient.patient.id }
+          ? { id: editingPatient.id }
+          : {}),
+        ...(action === 'payer_update' && editingPayer
+          ? {
+              id: editingPayer.payer.id,
+              previousName: editingPayer.payer.name,
+              previousKind: editingPayer.payer.kind,
+              associationKey: editingPayer.associationKey,
+              confirmShared: values.confirmShared === 'on',
+            }
           : {}),
       });
       setModal(null);
@@ -148,15 +159,27 @@ export default function Home() {
     setModal(type);
   }
   function openEdit(p: Patient) {
-    const payerId = data?.links.find((l) => l.patient_id === p.id)?.payer_id;
-    const payer =
-      data?.payers.find((py) => py.id === payerId) ?? null;
     setReschedule(null);
     setError('');
     setNotice('');
-    setEditingPatient(payer ? { patient: p, payer } : null);
-    setPayerKind(payer?.kind ?? 'self');
+    setEditingPatient(p);
     setModal('patient');
+  }
+  async function openEditPayer(p: Payer) {
+    setBusy(true);
+    setError('');
+    setNotice('');
+    try {
+      const response = await post({ action: 'payer_details', id: p.id });
+      setEditingPayer(response as unknown as PayerDetails);
+      setReschedule(null);
+      setEditingPatient(null);
+      setModal('payer');
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
   }
   function shift(n: number) {
     const d = new Date(date + 'T12:00:00');
@@ -262,6 +285,8 @@ export default function Home() {
               setSearch={setSearch}
               canWrite={!!canWrite}
               onEdit={openEdit}
+              onEditPayer={openEditPayer}
+              busy={busy}
             />
           )}
           {['clinical', 'quotes', 'sales'].includes(tab) && (
@@ -297,16 +322,22 @@ export default function Home() {
             <div className="modal-head">
               <div>
                 <span className="eyebrow">
-                  {modal === 'patient' ? 'FICHA DE PACIENTE' : 'AGENDA'}
+                  {modal === 'payer'
+                    ? 'RESPONSABLE DE PAGO'
+                    : modal === 'patient'
+                      ? 'FICHA DE PACIENTE'
+                      : 'AGENDA'}
                 </span>
                 <h2 id="modal-title">
-                  {modal === 'patient'
-                    ? editingPatient
-                      ? 'Editar paciente'
-                      : 'Registrar paciente'
-                    : reschedule
-                      ? 'Reprogramar cita'
-                      : 'Programar una cita'}
+                  {modal === 'payer'
+                    ? 'Editar responsable de pago'
+                    : modal === 'patient'
+                      ? editingPatient
+                        ? 'Editar paciente'
+                        : 'Registrar paciente'
+                      : reschedule
+                        ? 'Reprogramar cita'
+                        : 'Programar una cita'}
                 </h2>
               </div>
               <button
@@ -321,15 +352,19 @@ export default function Home() {
               onSubmit={(e) =>
                 submit(
                   e,
-                  reschedule
-                    ? 'reschedule'
-                    : modal === 'patient' && editingPatient
-                      ? 'patient_update'
-                      : modal,
+                  modal === 'payer'
+                    ? 'payer_update'
+                    : reschedule
+                      ? 'reschedule'
+                      : modal === 'patient' && editingPatient
+                        ? 'patient_update'
+                        : modal,
                 )
               }
             >
-              {modal === 'patient' ? (
+              {modal === 'payer' && editingPayer ? (
+                <PayerForm key={editingPayer.payer.id} details={editingPayer} />
+              ) : modal === 'patient' ? (
                 <PatientForm
                   payerKind={payerKind}
                   setPayerKind={setPayerKind}

@@ -1,6 +1,6 @@
 'use client';
 import { localDay } from '@/shared/format';
-import type { Patient, Payer } from '@/patients/patients.types';
+import type { Patient } from '@/patients/patients.types';
 export function PatientForm({
   payerKind,
   setPayerKind,
@@ -8,12 +8,10 @@ export function PatientForm({
 }: {
   payerKind: string;
   setPayerKind: (s: string) => void;
-  editing?: { patient: Patient; payer: Payer } | null;
+  editing?: Patient | null;
 }) {
-  const p = editing?.patient;
-  const payer = editing?.payer;
+  const p = editing;
   const birthDate = p?.birth_date ?? '';
-  const isSelf = payer ? payer.kind === 'self' : false;
   return (
     <>
       <label>
@@ -58,29 +56,34 @@ export function PatientForm({
           defaultValue={p?.phone}
         />
       </label>
-      <label>
-        Responsable de pago
-        <select
-          name="payerKind"
-          value={payerKind}
-          onChange={(e) => setPayerKind(e.target.value)}
-        >
-          <option value="self">El propio paciente</option>
-          <option value="person">Otra persona</option>
-          <option value="company">Empresa</option>
-          <option value="insurance">Aseguradora</option>
-        </select>
-      </label>
-      {payerKind !== 'self' && (
-        <label>
-          Nombre del pagador
-          <input
-            name="payerName"
-            required
-            maxLength={120}
-            defaultValue={isSelf ? '' : payer?.name}
-          />
-        </label>
+      {!editing && (
+        <>
+          <label>
+            Responsable de pago
+            <select
+              name="payerKind"
+              value={payerKind}
+              onChange={(e) => setPayerKind(e.target.value)}
+            >
+              <option value="self">El propio paciente</option>
+              <option value="person">Otra persona</option>
+              <option value="company">Empresa</option>
+              <option value="insurance">Aseguradora</option>
+            </select>
+          </label>
+          {payerKind !== 'self' && (
+            <label>
+              Nombre del pagador
+              <input name="payerName" required maxLength={120} />
+            </label>
+          )}
+        </>
+      )}
+      {editing && (
+        <p className="form-hint">
+          Aquí editas los datos personales. Los responsables de pago externos se
+          editan con su propia acción en la lista de pacientes.
+        </p>
       )}
       <p className="form-hint">
         Se comprobarán coincidencias de identificación, teléfono y nombre con

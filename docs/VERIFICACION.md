@@ -29,11 +29,3 @@ Las pruebas de API dejaron datos ficticios TEST para poder revisar su trazabilid
 No se ha realizado una prueba visual/interactiva de navegador, ni validación con usuarios clínicos. El mecanismo WebMCP se activa solo si el navegador lo soporta; su registro y ejecución no se han verificado en un contexto compatible y no son necesarios para usar la interfaz.
 
 Se ha desplegado una demo alojada privada. No está conectada a servicios de facturación, bancos o Cashea. Las limitaciones funcionales están documentadas en README.md y docs/COBERTURA.md.
-
-## Publicación privada y transferencia
-
-URL: https://clinica-surgival-demo.rea-de-traba-1179.chatgpt.site
-
-El 8 de septiembre se copiaron 4 usuarios, 4 pacientes, 4 pagadores, 4 relaciones paciente-pagador, 2 profesionales, 4 citas, 23 eventos, 1 consulta, 2 versiones clínicas, 2 presupuestos, 2 ventas y 3 pagos. No se copiaron sesiones ni intentos de acceso. El snapshot se validó con integridad y claves foráneas en una base aislada antes de importarlo.
-
-Por HTTP se comprobaron la página, API sin sesión (401), cuatro accesos demo, IDs conservados, notas y versiones, documento interno y restricciones de recepción (403). La importación repetida fue rechazada (409). Tras la copia se retiró del código la ruta temporal de importación. El acceso desde la PC del compañero sigue pendiente de invitación y comprobación por él.

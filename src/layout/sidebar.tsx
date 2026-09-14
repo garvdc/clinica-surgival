@@ -16,23 +16,23 @@ export function Sidebar({
 }) {
   const roleNames: Record<string, string> = roles;
   return (
-    <aside className="sidebar">
-      <a className="brand" href="/">
-        <span className="brand-icon">
-          <HeartPulse />
-        </span>
-        <span>
-          Clínica
-          <br />
-          <b>Surgival</b>
-        </span>
-      </a>
-      <div className="workspace">
-        SEDE DE DEMOSTRACIÓN
-        <span className="live-dot" />
-      </div>
-      <Tabs role={user.role} tab={tab} onNavigate={onNavigate} />
-      <div className="sidebar-bottom">
+    <aside className="sidebar" aria-label="Navegación y cuenta">
+      <div className="sidebar-content">
+        <a className="brand" href="/">
+          <span className="brand-icon">
+            <HeartPulse />
+          </span>
+          <span>
+            Clínica
+            <br />
+            <b>Surgival</b>
+          </span>
+        </a>
+        <div className="workspace">
+          SEDE DE DEMOSTRACIÓN
+          <span className="live-dot" />
+        </div>
+        <Tabs role={user.role} tab={tab} onNavigate={onNavigate} />
         <div className="demo-card">
           <Activity size={18} />
           <strong>MVP en construcción</strong>
@@ -41,20 +41,22 @@ export function Sidebar({
             ficticios.
           </p>
         </div>
-        <div className="account">
-          <div className="avatar">{user.name.slice(0, 1)}</div>
-          <div>
-            <strong>{user.name}</strong>
-            <small>{roleNames[user.role]}</small>
-          </div>
-          <button
-            title="Cerrar sesión"
-            aria-label="Cerrar sesión"
-            onClick={onLogout}
-          >
-            <LogOut size={18} />
-          </button>
+      </div>
+      <div className="account">
+        <div className="avatar">{user.name.slice(0, 1)}</div>
+        <div className="account-details">
+          <strong>{user.name}</strong>
+          <small>{roleNames[user.role]}</small>
         </div>
+        <button
+          type="button"
+          title="Cerrar sesión"
+          aria-label="Cerrar sesión"
+          onClick={onLogout}
+        >
+          <LogOut size={18} />
+          <span>Salir</span>
+        </button>
       </div>
     </aside>
   );

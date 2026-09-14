@@ -87,49 +87,20 @@ export async function updatePatient(
       },
       409,
     );
-  const own = x.payerKind === 'self';
-  const kind = required(x.payerKind, 'Tipo de pagador', 30);
-  if (!['self', 'person', 'company', 'insurance'].includes(kind))
-    throw new Error('Tipo de pagador inválido.');
-  const payerName = own
-    ? name
-    : required(x.payerName, 'Nombre del pagador', 120);
-  const linkedPayer = await db()
-    .prepare('SELECT payer_id FROM patient_payers WHERE patient_id=? LIMIT 1')
-    .bind(id)
-    .first<{ payer_id: string }>();
-  let payerId = linkedPayer?.payer_id;
-  if (payerId) {
-    await db().batch([
-      db()
-        .prepare(
-          'UPDATE patients SET name=?,document=?,phone=?,birth_date=? WHERE id=?',
-        )
-        .bind(name, document, phone, birthDate, id),
-      db()
-        .prepare('UPDATE payers SET name=?,kind=? WHERE id=?')
-        .bind(payerName, kind, payerId),
-      auditStmt(db(), u, 'Paciente editado', id, 'Ficha actualizada'),
-    ]);
-  } else {
-    payerId = crypto.randomUUID();
-    await db().batch([
-      db()
-        .prepare(
-          'UPDATE patients SET name=?,document=?,phone=?,birth_date=? WHERE id=?',
-        )
-        .bind(name, document, phone, birthDate, id),
-      db().prepare('INSERT INTO payers(id,name,kind) VALUES(?,?,?)').bind(
-        payerId,
-        payerName,
-        kind,
-      ),
-      db()
-        .prepare('INSERT INTO patient_payers(patient_id,payer_id) VALUES(?,?)')
-        .bind(id, payerId),
-      auditStmt(db(), u, 'Paciente editado', id, 'Ficha actualizada'),
-    ]);
-  }
+  await db().batch([
+    db()
+      .prepare(
+        'UPDATE patients SET name=?,document=?,phone=?,birth_date=? WHERE id=?',
+      )
+      .bind(name, document, phone, birthDate, id),
+    // Only self payers exclusively linked to this patient follow their name.
+    db()
+      .prepare(
+        "UPDATE payers SET name=? WHERE kind='self' AND id IN (SELECT payer_id FROM patient_payers WHERE patient_id=?) AND (SELECT COUNT(*) FROM patient_payers WHERE payer_id=payers.id)=1",
+      )
+      .bind(name, id),
+    auditStmt(db(), u, 'Paciente editado', id, 'Datos personales actualizados'),
+  ]);
   return json({ ok: true, id });
 }
 
