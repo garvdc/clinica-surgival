@@ -10,8 +10,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
-      <body>{children}</body>
+    <html lang="es" suppressHydrationWarning>
+      <body>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{document.documentElement.dataset.theme=localStorage.getItem('surgival-theme')==='dark'?'dark':'light'}catch{document.documentElement.dataset.theme='light'}",
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

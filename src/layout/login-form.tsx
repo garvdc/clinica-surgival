@@ -1,4 +1,5 @@
 'use client';
+import { ThemeToggle } from '@/layout/theme-toggle';
 import { ShieldCheck, ArrowUpRight, HeartPulse } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 export function LoginForm({
@@ -15,6 +16,9 @@ export function LoginForm({
 }) {
   return (
     <main className="login">
+      <div className="login-theme">
+        <ThemeToggle />
+      </div>
       <section className="login-story">
         <div className="brand">
           <HeartPulse />

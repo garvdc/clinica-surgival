@@ -100,3 +100,5 @@ Fuentes: Documento Funcional de Arranque v0.1, propuesta técnica, esquema gráf
 La edición independiente de pacientes y responsables de pago se describe en [la guía de pagadores](docs/PAGADORES.md).
 
 La gestión de cuentas está disponible para Administración en **Configuración → Usuarios**. Consulta [la guía de usuarios](docs/USUARIOS.md).
+
+El botón de la esquina superior derecha alterna entre modo claro y oscuro. La elección se conserva en ese navegador, también al cerrar sesión. Está disponible en la pantalla de acceso y dentro del sistema.

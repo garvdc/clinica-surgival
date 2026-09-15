@@ -1,4 +1,5 @@
 'use client';
+import { ThemeToggle } from '@/layout/theme-toggle';
 export function Topbar({ tab }: { tab: string }) {
   return (
     <header className="topbar">
@@ -20,10 +21,13 @@ export function Topbar({ tab }: { tab: string }) {
           }
         </b>
       </span>
-      <span className="demo-pill">
-        <span />
-        Datos ficticios · Demo
-      </span>
+      <div className="topbar-actions">
+        <span className="demo-pill">
+          <span />
+          Datos ficticios · Demo
+        </span>
+        <ThemeToggle />
+      </div>
     </header>
   );
 }
